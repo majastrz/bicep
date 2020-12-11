@@ -224,6 +224,8 @@ namespace Bicep.Core
 
             var resourceRefArray = new TypedArrayType(ResourceRef, TypeSymbolValidationFlags.Default);
             yield return new TypeProperty("dependsOn", resourceRefArray, TypePropertyFlags.WriteOnly);
+            
+            yield return new TypeProperty("scope", new ResourceScopeReference("resource", ResourceScopeType.ResourceScope), TypePropertyFlags.WriteOnly);
         }
     }
 }

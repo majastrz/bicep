@@ -231,6 +231,7 @@ namespace Bicep.Core.Emit
             {
                 var scopeType = scopeResource.Type as ResourceType ?? throw new ArgumentException("Missing resource type information");
                 this.emitter.EmitProperty("scope", () => this.emitter.EmitUnqualifiedResourceId(scopeResource.DeclaringResource, scopeType.TypeReference));
+                // TODO: handle extension resources of extension resources correctly
             }
             this.emitter.EmitObjectProperties(resourceBody, ResourcePropertiesToOmit);
 

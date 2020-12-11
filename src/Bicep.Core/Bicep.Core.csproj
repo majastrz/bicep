@@ -11,8 +11,8 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="System.Collections.Immutable" Version="5.0.0" />
     <PackageReference Include="Azure.Deployments.Expression" Version="1.0.112" />
-    <PackageReference Include="Azure.Bicep.Types" Version="0.1.14" />
-    <PackageReference Include="Azure.Bicep.Types.Az" Version="0.1.14" />
+    <Reference Include="Azure.Bicep.Types" HintPath="/Users/ant/Code/bicep-types-az/src/Bicep.Types/bin/Debug/netstandard2.0/Azure.Bicep.Types.dll" />
+    <Reference Include="Azure.Bicep.Types.Az" HintPath="/Users/ant/Code/bicep-types-az/src/Bicep.Types.Az/bin/Debug/netstandard2.0/Azure.Bicep.Types.Az.dll" />
   </ItemGroup>
 
 </Project>
