@@ -2,12 +2,10 @@
 // Licensed under the MIT License.
 
 using System;
-using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using Bicep.Core.Extensions;
 using Bicep.Core.Semantics;
-using Bicep.Core.Semantics.Namespaces;
 using Bicep.Core.Syntax;
 using Bicep.Core.TypeSystem;
 using Newtonsoft.Json;
@@ -31,14 +29,14 @@ namespace Bicep.Core.Emit
         }.ToImmutableArray();
 
         private static ImmutableHashSet<string> ResourcePropertiesToOmit = new [] {
-            "dependsOn",
-            "scope",
+            LanguageConstants.ResourceScopePropertyName,
+            LanguageConstants.ResourceDependsOnPropertyName,
         }.ToImmutableHashSet();
 
         private static ImmutableHashSet<string> ModulePropertiesToOmit = new [] {
             LanguageConstants.ModuleParamsPropertyName,
-            LanguageConstants.ModuleScopePropertyName,
-            "dependsOn",
+            LanguageConstants.ResourceScopePropertyName,
+            LanguageConstants.ResourceDependsOnPropertyName,
         }.ToImmutableHashSet();
 
         private static SemanticModel GetModuleSemanticModel(ModuleSymbol moduleSymbol)
@@ -229,9 +227,7 @@ namespace Bicep.Core.Emit
             this.emitter.EmitProperty("apiVersion", typeReference.ApiVersion);
             if (context.SemanticModel.EmitLimitationInfo.ResoureScopeData[resourceSymbol] is ResourceSymbol scopeResource)
             {
-                var scopeType = scopeResource.Type as ResourceType ?? throw new ArgumentException("Missing resource type information");
-                this.emitter.EmitProperty("scope", () => this.emitter.EmitUnqualifiedResourceId(scopeResource.DeclaringResource, scopeType.TypeReference));
-                // TODO: handle extension resources of extension resources correctly
+                this.emitter.EmitProperty("scope", () => this.emitter.EmitUnqualifiedResourceId(scopeResource));
             }
             this.emitter.EmitObjectProperties(resourceBody, ResourcePropertiesToOmit);
 
@@ -338,11 +334,10 @@ namespace Bicep.Core.Emit
                 switch (dependency)
                 {
                     case ResourceSymbol resourceDependency:
-                        var typeReference = EmitHelpers.GetTypeReference(resourceDependency);
-                        emitter.EmitResourceIdReference(resourceDependency.DeclaringResource, typeReference);
+                        emitter.EmitResourceIdReference(resourceDependency);
                         break;
                     case ModuleSymbol moduleDependency:
-                        emitter.EmitModuleResourceIdExpression(moduleDependency);
+                        emitter.EmitResourceIdReference(moduleDependency);
                         break;
                     default:
                         throw new InvalidOperationException($"Found dependency '{dependency.Name}' of unexpected type {dependency.GetType()}");
